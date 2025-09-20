@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Table - CIICC Vault</title>
+    <meta name="description" content="CIICC Vault is a next-generation financial institution built on the principles of security, innovation, and trust. As a modern banking and financial services platform, CIICC Vault empowers individuals and businesses to take control of their financial future through cutting-edge digital solutions, robust infrastructure, and world-class service.
+
+At CIICC Vault, your assets are more than protected — they’re elevated. Whether you're managing personal savings, investing in your business, or building long-term wealth, our suite of services is designed to deliver stability, transparency, and performance at every level.
+
+Backed by CIICC's global expertise in finance and technology, Vault isn’t just a place to store your wealth — it's where your financial potential is unlocked.">
+    <link rel="icon" type="image/png" sizes="72x72" href="assets/img/icon.png?h=e7988ff516728768a8a2a7396182a4f4">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=79ce12dbe70c189de86bb63b9da0df1f">
+    <link rel="stylesheet" href="assets/css/Nunito.css?h=4a3aabd01a99ade50f017fc6ebedb1b3">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=13bea3cde590997c1094f9bba14d719a">
+    <link rel="stylesheet" href="assets/css/untitled.css?h=e1d57f1f59f15d26d934d21f5ed4bd26">
+    <script src="assets/js/userAuth.js"></script>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 toggled" style="background: var(--bs-danger);">
+            <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon rotate-n-15"><img class="border rounded-circle" src="assets/img/icon.png?h=e7988ff516728768a8a2a7396182a4f4" style="width: 50px;height: 50px;"></div>
+                    <div class="sidebar-brand-text mx-3"><span>CIICC Vault</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-home"></i><span>My Account</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="transactions.html"><i class="fas fa-table"></i><span>Transactions</span></a></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                            <li class="nav-item dropdown no-arrow">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">
+                                    <span id="name_show" class="d-none d-lg-inline me-2 text-gray-600 small"></span>
+                                    <img id="imgProfile" class="border rounded-circle img-profile" src="assets/img/avatars/default.jpg?h=d7112b99f8e759be6a286613749189a6"></a>
+                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="profile.html"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profile</a>
+                                        <div class="dropdown-divider"></div>
+                                        <button onclick="delCookie()" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <div class="container-fluid">
+                    <div class="col-md-9 col-lg-7 col-xl-6 col-xxl-4 m-auto">
+                        <h3 class="text-dark mb-4">Transactions</h3>
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <p class="text-primary float-start m-0 fw-bold" style="width: 90%;">History</p>
+                                <a class="float-end" href="#" data-bs-target="#dateSearchModal" data-bs-toggle="modal"><i class="far fa-calendar-alt" style="font-size: 18px;"></i></a>
+                            </div>
+                            <div id="transactionCard" class="card-body">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © CIICC Vault 2025</span></div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="dateSearchModal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header fw-bold text-primary">
+                    <h4 class="modal-title" style="font-weight: bold;">
+                        <i class="far fa-calendar-alt"></i>&nbsp; Search Transactions Date</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 20px 40px;">
+                    <p>From</p>
+                    <div class="input-group">
+                        <input id="dateFrom" class="form-control" type="date" style="margin: 0 0 16px 0;">
+                    </div>
+                    <p>To</p>
+                    <div class="input-group">
+                        <input id="dateTo" class="form-control" type="date" style="margin: 0 0 16px 0;">
+                    </div>
+                    <button id="searchButton" class="btn btn-primary" type="button" style="width: 100%;" data-bs-dismiss="modal">Search</button>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js?h=01bb7ae0c0b11509558f2aa83f244399"></script>
+    <script src="assets/js/theme.js?h=79f403485707cf2617c5bc5a2d386bb0"></script>
+    <script src="assets/js/index.js"></script>
+    <script src="assets/js/transactions.js"></script>
+</body>
+
+</html>

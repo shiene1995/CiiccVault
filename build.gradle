@@ -1,0 +1,32 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ciiccvault'
+version = '0.0.1-SNAPSHOT'
+description = 'Ciicc Vault - Digital Bank'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.bouncycastle:bcprov-jdk15to18:1.78' // Or latest version
+    implementation 'org.bouncycastle:bcpkix-jdk15to18:1.78' // Or latest version
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
