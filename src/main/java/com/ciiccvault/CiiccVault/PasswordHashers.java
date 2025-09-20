@@ -44,7 +44,7 @@ public class PasswordHashers {
 
     public static void main(String[] args) {
         // Registration (both salt and hashed should be SAVE in database)
-        String password = "zyrinne";
+        String password = "123456";
         byte[] salt = generateSalt();
         String hashed = hashPassword(password.toCharArray(), salt);
 

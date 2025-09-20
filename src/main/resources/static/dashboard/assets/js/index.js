@@ -63,6 +63,34 @@ fetch("/sendMoney", {
 
 });
 
+refresh();
+
+function refresh() {
+
+    const id = getCookie('id');
+
+    const refresh = {
+        userID: id
+    };
+
+    fetch("/refresh", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"  
+        },
+        body: JSON.stringify(refresh)
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        setCookie("balance", data, 20);
+
+    })
+    .catch(err => {
+        alert(err);
+    });
+}
+
 
 function keyEnter(ID) {
     document.getElementById(ID).addEventListener("keypress", function(event) {

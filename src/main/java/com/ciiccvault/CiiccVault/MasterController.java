@@ -32,7 +32,6 @@ public class MasterController {
 
         private String searchAccount;
 
-        // Getters and setters
         public String getUserID() {return userID;}
         public String getAccountNumber() {return accountNumber;}
         public String getAmountDeposit() {return amountDeposit;}
@@ -41,6 +40,17 @@ public class MasterController {
         public String getDateFrom() {return dateFrom;}
         public String getDateTo() {return dateTo;}
         public String getSearchAccount() {return searchAccount;}
+    }
+
+    public static class EditAccountSave {
+        private String inputFname;
+        private String inputLname;
+        private String userID;
+
+
+        public String getUserID() {return userID;}
+        public String getInputFname() {return inputFname;}
+        public String getInputLname() {return inputLname;}
     }
 
     @PostMapping("/depositMoney")
@@ -80,13 +90,17 @@ public class MasterController {
 
         DecimalFormat df = new DecimalFormat("0.00");
 
-        return df.format(rs.getFloat(1));
+        String data = df.format(rs.getFloat(1));
+        rs.close();
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+
+        return data;
     }
 
     @PostMapping("/listAccounts")
     public String listAccounts(@RequestBody Master master) throws SQLException {
 
-        int numPages = 5; //PAGE LIMIT
+        int numPages = 100; //PAGE LIMIT
         int pageClick = 1;
         if(master.getPageClick() != null){pageClick = Integer.parseInt( master.getPageClick());}
         if (MasterController.numPages >= 0){ if(pageClick > MasterController.numPages){pageClick = MasterController.numPages;}}
@@ -96,16 +110,19 @@ public class MasterController {
         MySQL mySQLConnection = new MySQL("db_ciicc");
         ResultSet rs;
 
-        if (master.getSearchAccount().isEmpty() && pageClick > 1) {
-            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "LIMIT "+start+" "+numPages);
-        } else if (!master.getSearchAccount().isEmpty() && pageClick > 1)
+        if(master.getSearchAccount().isEmpty())
+        {
+            rs = mySQLConnection.manualSQL("SELECT * FROM tb_account LIMIT "+start+", "+numPages);
+        }
+        else if (!master.getSearchAccount().isEmpty() && pageClick > 1)
+        {
+            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "LIMIT "+start+", "+numPages);
+        }
+        else
         {   // SEARCH
             rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "LIMIT "+numPages);
         }
-        else
-        {
-            rs = mySQLConnection.manualSQL("SELECT * FROM tb_account LIMIT "+numPages);
-        }
+
 
         StringBuilder data = new StringBuilder();
 
@@ -118,6 +135,9 @@ public class MasterController {
         //! I NEED FIX THE PAGINATION
         //data.append(pagesAccountList(master.getUserID(), numPages, master, pageClick));
 
+        rs.close();
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+
         return data.toString();
     }
 
@@ -126,7 +146,7 @@ public class MasterController {
         MySQL mySQLConnection = new MySQL("db_ciicc");
 
         int rs1 = mySQLConnection.updateSQL(new String[]{master.getStatus()},new String[] {"status"},"tb_account",master.getUserID());
-
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
         return "TRUE";
     }
 
@@ -176,6 +196,67 @@ public class MasterController {
         rs.close();
         mySQLConnection.close(); //Closing MySQL Connection and stmt
         return data.toString();
+    }
+
+    @PostMapping("/editAccount")
+    public String editAccount(@RequestBody Master master) throws SQLException {
+        MySQL mySQLConnection = new MySQL("db_ciicc");
+
+        ResultSet rs = mySQLConnection.selectSQL(master.getUserID(),"id","tb_account","");
+        rs.next();
+        String data = rs.getString("Fname")+","+rs.getString("Lname")+","+rs.getString("img_link");
+        rs.close();
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+        return data;
+    }
+
+    @PostMapping("/editAccountSave")
+    public String editAccountSave(@RequestBody EditAccountSave editAccountSave) throws SQLException {
+        MySQL mySQLConnection = new MySQL("db_ciicc");
+
+        if (editAccountSave.getInputFname().isEmpty() || editAccountSave.getInputLname().isEmpty())
+        {return "All input must not be empty!";}
+
+        int rs1 = mySQLConnection.updateSQL(new String[]{editAccountSave.getInputFname(), editAccountSave.getInputLname()},new String[] {"Fname", "Lname"},"tb_account",editAccountSave.getUserID());
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+        if (rs1 > 0) {
+            return "TRUE";
+        }
+        else
+        {
+            return "FALSE";
+        }
+    }
+
+    @PostMapping("/changePassToDefault")
+    public String changePassToDefault(@RequestBody Master master) throws SQLException {
+        MySQL mySQLConnection = new MySQL("db_ciicc");
+
+        int rs1 = mySQLConnection.updateSQL(new String[]{"E4KD3Euf48vqBhtF/GSor6phRJHQCWtUtcKE3JZgaTc=", "EHeoo1sUCbeQoAanbbyvBw=="},new String[] {"PasswordHash", "SaltHash"},"tb_account","1");
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+
+        if (rs1 > 0) {
+            return "PASSWORD CHANGED TO : 123456";
+        }
+        else
+        {
+            return "FAILED TO CHANGE PASSWORD";
+        }
+    }
+
+    @PostMapping("/delAccount")
+    public String delAccount(@RequestBody Master master) throws SQLException {
+        MySQL mySQLConnection = new MySQL("db_ciicc");
+
+        int rs1 = mySQLConnection.deleteSQL(master.getUserID(), "tb_account");
+
+        if (rs1 > 0) {
+            return "Account has been deleted Permanently!";
+        }
+        else
+        {
+            return "FAILED TO DELETE ACCOUNT!";
+        }
     }
 
     public static String accountData(String userID, String status, String imgLink, String name, String dateCreated, String availableBalance){
@@ -316,27 +397,31 @@ public class MasterController {
 
     public static String pagesAccountList(String activeUserID, int numPages, Master master, int pageClick) throws SQLException {
 
+        if(master.getPageClick() != null){pageClick = Integer.parseInt( master.getPageClick());}
+        if (MasterController.numPages >= 0){ if(pageClick > MasterController.numPages){pageClick = MasterController.numPages;}}
+        int start = (pageClick - 1) * numPages;
+        if(start <=0){start=0; pageClick = 1;}
 
         MySQL mySQLConnection = new MySQL("db_ciicc");
 
         ResultSet rs;
 
-        if (master.getSearchAccount().isEmpty())
+        if(master.getSearchAccount().isEmpty())
         {
             rs = mySQLConnection.manualSQL("SELECT * FROM tb_account");
-        } else if (!master.getSearchAccount().isEmpty() && pageClick > 1) {
-            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "");
-        } else
+        }
+        else if (!master.getSearchAccount().isEmpty() && pageClick > 0)
+        {
+            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "LIMIT "+start+", "+numPages);
+        }
+        else
         {   // SEARCH
-            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "");
+            rs = mySQLConnection.searchSQL(master.getSearchAccount(), new String[] {"Fname","Lname","Username", "account_number", "balance_money", "date_account_created", "status"},"tb_account", "LIMIT "+numPages);
         }
 
         //int pageClick = 1;
 
-        if(master.getPageClick() != null){pageClick = Integer.parseInt( master.getPageClick());}
-        if (MasterController.numPages >= 0){ if(pageClick > MasterController.numPages){pageClick = MasterController.numPages;}}
-        int start = (pageClick - 1) * numPages;
-        if(start <=0){start=0; pageClick = 1;}
+
 
         int numResult = 0;
 

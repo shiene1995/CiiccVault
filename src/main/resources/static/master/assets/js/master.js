@@ -113,7 +113,9 @@ function status(userID, value) {
 }
 let userIdTransaction = 0;
 function transaction(userID) {
+
     userIdTransaction = userID;
+
     const transaction = {
         userID: userID
     };
@@ -133,13 +135,126 @@ function transaction(userID) {
         alert(err);
     });
 }
-
+let userIdEditAccount = 0;
 function editAccount(userID) {
-    alert("editAccount : "+userID);
+userIdEditAccount = userID;
+    const editAccount = {
+        userID: userID
+    };
+
+    fetch("/editAccount", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"  
+        },
+        body: JSON.stringify(editAccount)
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        var arr = data.split(',');
+
+        document.getElementById("inputFname").value = arr[0];
+        document.getElementById("inputLname").value = arr[1];
+        if (arr[2]!="") {
+            document.getElementById("imgAccount").src = "../dashboard/assets/img/avatars/" + arr[2]; 
+        }
+        else
+        {
+            document.getElementById("imgAccount").src = "../dashboard/assets/img/avatars/default.jpg";
+        }
+
+    })
+    .catch(err => {
+        alert(err);
+    });
+
 }
 
+function editAccountSave() {
+    
+    const inputFname = document.getElementById("inputFname").value;
+    const inputLname = document.getElementById("inputLname").value;
+
+    const editAccountData = {
+        userID: userIdEditAccount,
+        inputFname: inputFname,
+        inputLname: inputLname
+    };
+
+    fetch("/editAccountSave", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"  
+        },
+        body: JSON.stringify(editAccountData)
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        if (data != "TRUE") {
+            alert(data);
+        }
+        else
+        {
+            window.location.assign("master.html");
+        }
+
+    })
+    .catch(err => {
+        alert(err);
+    });
+
+}
+
+function changePassToDefault() {
+    const changePassToDefault = {
+        userID: userIdEditAccount
+    };
+
+    fetch("/changePassToDefault", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"  
+        },
+        body: JSON.stringify(changePassToDefault)
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        alert(data);
+
+    })
+    .catch(err => {
+        alert(err);
+    });
+}
+let delAccountID = 0;
 function delAccount(userID) {
-    alert("delAccount : "+userID);
+    delAccountID = userID;
+}
+
+function delAccountConfirm() {
+    const delAccount = {
+        userID: delAccountID
+    };
+
+    fetch("/delAccount", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"  
+        },
+        body: JSON.stringify(delAccount)
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        alert(data);
+        window.location.assign("master.html");
+    })
+    .catch(err => {
+        alert(err);
+    });
 }
 
 function keyEnter(ID, ID2) {

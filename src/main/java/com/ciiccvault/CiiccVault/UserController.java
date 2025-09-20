@@ -3,6 +3,7 @@ package com.ciiccvault.CiiccVault;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.desktop.UserSessionEvent;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -42,7 +43,14 @@ public class UserController {
         private String password1;
         private String password2;
 
+        private String userID;
+
         // Getters and setters
+        public String getUserID() {
+            return userID;
+        }
+
+
         public String getUsername() {
             return username;
         }
@@ -420,6 +428,18 @@ public class UserController {
         rs.close();
         mySQLConnection.close(); //Closing MySQL Connection and stmt
         return data.toString();
+    }
+
+    @PostMapping("/refresh")
+    public String refresh(@RequestBody User user) throws SQLException {
+        MySQL mySQLConnection = new MySQL("db_ciicc");
+
+        ResultSet rs = mySQLConnection.manualSQL("SELECT SUM(balance_money) FROM tb_account WHERE id="+user.getUserID());
+        rs.next();
+        String data = rs.getString(1);
+        rs.close();
+        mySQLConnection.close(); //Closing MySQL Connection and stmt
+        return data;
     }
 
     @GetMapping("/") // Redirection
