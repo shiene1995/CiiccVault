@@ -184,7 +184,7 @@ public class UserController {
                 if (rs.next()) {
 
                     if (!rs.getString("status").equals("true") && !rs.getString("status").equals("master"))
-                    {return "Your Account is Locked. Please contact us for mode info.";}
+                    {return "LOCKED";}
 
                     boolean VP = PasswordHashers.verifyPassword(user.getPassword(), rs.getString("PasswordHash"), rs.getString("SaltHash"));
                     boolean VU = PasswordHashers.verifyUsername(user.getUsername(),rs.getString("username")); //to case-sensitive the username
@@ -208,15 +208,14 @@ public class UserController {
                         rs.close(); //Closed the ResultSet (For Select Query only)
                         mySQLConnection.close(); //Closing MySQL Connection and stmt
 
-
                         return data;
 
-                    } else { return "INVALID USERNAME OR PASSWORD!"; }
+                    } else { return "Invalid username or password!"; }
 
-                } else {return "INVALID USERNAME OR PASSWORD!";}
+                } else {return "Invalid username or password!";}
             } catch (SQLException ex) {throw new RuntimeException(ex);}
 
-        } else {return "INVALID USERNAME OR PASSWORD!";}
+        } else {return "Invalid username or password!";}
     }
 
     @PostMapping("/register")
@@ -239,7 +238,7 @@ public class UserController {
             if (rs.next()) {
                 rs.close(); //Closed the ResultSet (For Select Query only)
                 mySQLConnection.close(); //Closing MySQL Connection and stmt
-                return "INVALID USERNAME. PLEASE CHOOSE ANOTHER!";
+                return "Invalid username. Kindly select a different one.";
             }
 
             //getting next id
@@ -256,11 +255,9 @@ public class UserController {
             rs.close(); //Closed the ResultSet (For Select Query only)
             mySQLConnection.close(); //Closing MySQL Connection and stmt
 
-            if (rs1 > 0) {
-
-                return "TRUE";
-            } else {return "INVALID USERNAME. PLEASE CHOOSE ANOTHER!";}
-        } else {return "INVALID USERNAME. PLEASE CHOOSE ANOTHER!";}
+            if (rs1 > 0) {return "TRUE";}
+            else {return "Invalid username. Kindly select a different one.";}
+        } else {return "Invalid username. Kindly select a different one.";}
     }
 
     @PostMapping("/profileImage")
@@ -297,7 +294,7 @@ public class UserController {
             mySQLConnection.updateSQL(new String[]{newFileName},new String[] {"img_link"},"tb_account",userID);
             mySQLConnection.close(); //Closing MySQL Connection and stmt
 
-            return new ResponseEntity<>("Image uploaded successfully!", HttpStatus.OK);
+            return new ResponseEntity<>("TRUE", HttpStatus.OK);
 
         } catch (IOException e) {return new ResponseEntity<>("Failed to upload image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);} catch (
                 SQLException e) {
@@ -345,6 +342,9 @@ public class UserController {
 
     @PostMapping("/sendMoney")
     public String sendMoney(@RequestBody SendMoney sendMoney) throws SQLException {
+
+        if (Double.parseDouble(sendMoney.getAmountSent()) <= 0) { return "The amount you will send is invalid!"; }
+
         MySQL mySQLConnection = new MySQL("db_ciicc");
 
         ResultSet rs = mySQLConnection.selectSQL(sendMoney.getUserID(), "id", "tb_account", "");rs.next(); //check balance
@@ -354,6 +354,8 @@ public class UserController {
         BigDecimal result = balance.subtract(amountSent);
 
         String senderAccountNumber = rs.getString("account_number");
+
+        if (sendMoney.getAccNum().replaceFirst("^0+", "").equals(rs.getString("account_number"))){ return "You can't send money to your account!";}
 
         if (result.compareTo(BigDecimal.ZERO) < 0) {return "Insufficient balance. Please deposit money to the nearest bank of CiiccVault.";}
 

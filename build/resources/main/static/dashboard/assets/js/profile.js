@@ -4,45 +4,28 @@ const fileInput = document.getElementById('imageUpdate');
 fileInput.addEventListener('change', () => { //UPDATE PROFILE IMAGE
     const file = fileInput.files[0];
     if (!file || !file.type.startsWith('image/')) {
-        alert('Please select a valid image file.');
+        genModal("Message", "Please select a valid image file.", "info");
         return;
     }
 
-    // Optional: Provide immediate user feedback (e.g., disable input, show loading spinner)
-    // fileInput.disabled = true;
-    // showLoadingIndicator(); // You'd need to implement this function
-
     const formData = new FormData();
     formData.append('imageUpdate', file);
-    formData.append('userID', id); // Make sure 'id' is defined in your scope
-    formData.append('accountNumber', accountNumber); // Make sure 'id' is defined in your scope
+    formData.append('userID', id);
+    formData.append('accountNumber', accountNumber); 
 
     fetch('/profileImage', {
         method: 'POST',
         body: formData
     })
-    .then(res => {
-        if (!res.ok) { // Check if the HTTP status code indicates success (200-299)
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.text(); // Assuming your PHP always returns text (HTML message + <img>)
-    })
+    .then(res => res.text())
     .then(data => {
-        // This block runs ONLY AFTER the server has responded successfully
-        alert(data); // Server returns HTML: message + <img>. This alert will now show after upload.
-        console.log("Image uploaded and server responded. Refreshing page...");
-        window.location.assign("profile.html");
+        if (data == "TRUE") {
+            genModal("Message", "Image uploaded successfully!", "success");
+        }
+        else{genModal("Message", data, "info");}
+        document.getElementById('generalModal').addEventListener('hidden.bs.modal', function () {location.reload();}); 
     })
-    .catch(error => {
-        // This block runs if there's a network error or a non-OK HTTP status
-        alert('Upload failed. Please try again. : ' + error); // More user-friendly message
-        console.error('Error during image upload:', error);
-    })
-    .finally(() => {
-        // Optional: Re-enable input or hide loading spinner, regardless of success or failure
-        // fileInput.disabled = false;
-        // hideLoadingIndicator(); // You'd need to implement this function
-    });
+    .catch(err => {genModal("Error", err, "danger");});
 });
 
 const updateProfile = document.getElementById('updateProfile');
@@ -57,7 +40,7 @@ updateProfile.addEventListener('click', () => { //UPDATE PROFILE FIRST AND LAST 
     const id = getCookie('id');
 
     if (isEmpty(firstName) || isEmpty(lastName)) {
-        alert("First and Last name must not be empty!");
+        genModal("Message", "First and Last name must not be empty!", "info");
         return;
     }
 
@@ -69,9 +52,7 @@ const userUpdate = {
 
 fetch("/profileUpdate", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"  },
         body: JSON.stringify(userUpdate)
     })
     .then(res => res.text())
@@ -80,14 +61,12 @@ fetch("/profileUpdate", {
       if (data == "TRUE") {
         setCookie("firstName", firstName.value, 20);
         setCookie("lastName", lastName.value, 20);
-        alert("Profile update successful!");
-        window.location.assign("profile.html");
-      } else {alert(data);}
+        genModal("Message", "Profile update successful!", "success");
+        document.getElementById('generalModal').addEventListener('hidden.bs.modal', function () {location.reload();}); 
+      } else {genModal("Message", data, "info");}
 
     })
-    .catch(err => {
-        alert(err);
-    });
+    .catch(err => {genModal("Error", err, "danger");});
 
 });
 
@@ -105,7 +84,7 @@ const newPass2 = document.getElementById('newPass2');
 const id = getCookie('id');
 
     if (isEmpty(oldPass) || isEmpty(newPass1) || isEmpty(newPass2)) {
-        alert("All input must not be empty!");
+        genModal("Message", "All input must not be empty!", "info");
         return;
     }
 
@@ -118,22 +97,18 @@ const changePassword = {
 
 fetch("/changePassword", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"  },
         body: JSON.stringify(changePassword)
     })
     .then(res => res.text())
     .then(data => {
 
       if (data == "TRUE") {
-        alert("PASSWORD HAS BEEN CHANGED!");
-      } else {alert(data);}
+        genModal("Message", "PASSWORD HAS BEEN CHANGED!", "success");
+      } else {genModal("Message", data, "info");}
 
     })
-    .catch(err => {
-        alert(err);
-    });
+    .catch(err => {genModal("Error", err, "danger");});
 
 });
 

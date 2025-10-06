@@ -1,3 +1,4 @@
+
 document.getElementById("login").addEventListener("click", loginButton);
 
 keyEnter("username");
@@ -9,7 +10,7 @@ function loginButton() {
     const password = document.getElementById("password");
 
     if (isEmpty(username) || isEmpty(password)) {
-        alert("Username and password must not be empty!");
+        genModal("Message", "Username and password must not be empty!", "info");
         return;
     }
 
@@ -52,10 +53,13 @@ function loginButton() {
             setCookie("username", arr[7], cookie_time);
             window.location.assign("../master/master.html");
         }
-        else{alert(data);username.value = "";password.value = "";}
+        else if (data == "LOCKED") {
+            genModal("Message", "Your Account is Locked. Please contact us for more info.", "warning");password.value = "";
+        }
+        else{genModal("Message", data, "info");password.value = "";}
     })
     .catch(err => {
-        alert(err);
+        genModal("Error", err, "danger");
     });
 }
 

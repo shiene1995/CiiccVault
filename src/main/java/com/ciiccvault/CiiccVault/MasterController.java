@@ -129,7 +129,7 @@ public class MasterController {
         while (rs.next()){
             if (!rs.getString("status").equals("master")) {
                 data.append(accountData(rs.getString("id"), rs.getString("status"), rs.getString("img_link"), rs.getString("Fname") + " " + rs.getString("Lname")
-                        , rs.getString("date_account_created"), rs.getString("balance_money")));
+                        , rs.getString("date_account_created"), rs.getString("balance_money"), rs.getString("account_number")));
             }
         }
         //! I NEED FIX THE PAGINATION
@@ -259,7 +259,7 @@ public class MasterController {
         }
     }
 
-    public static String accountData(String userID, String status, String imgLink, String name, String dateCreated, String availableBalance){
+    public static String accountData(String userID, String status, String imgLink, String name, String dateCreated, String availableBalance, String accountNumber){
 
         DecimalFormat df = new DecimalFormat("0.00");
 
@@ -292,6 +292,7 @@ public class MasterController {
                         <img class="rounded-circle me-2" width="30" height="30" src="../dashboard/assets/img/avatars/%s">%s
                     </td>
                     <td class="text-center">%s</td>
+                    <td class="text-center">%s</td>
                     <td class="text-end">%s</td>
                     <td class="text-center">
                         <div class="btn-group" role="group">
@@ -301,7 +302,7 @@ public class MasterController {
                         </div>
                     </td>
                 </tr>
-                """, userID, status, statusLabel, imgLink, name, dateCreated, availableBalance, userID, userID, userID);
+                """, userID, status, statusLabel, imgLink, name, accountNumber, dateCreated, availableBalance, userID, userID, userID);
 
 
         return data;

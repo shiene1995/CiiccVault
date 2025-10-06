@@ -16,7 +16,7 @@ fetch("/transactions", {
         document.getElementById("transactionCard").innerHTML = data;
     })
     .catch(err => {
-        alert(err);
+        genModal("Error", err, "danger");;
     });
 
 
@@ -34,9 +34,7 @@ function pageClick(data) {
 
     fetch("/transactions", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"  },
         body: JSON.stringify(transactions)
     })
     .then(res => res.text())
@@ -45,7 +43,7 @@ function pageClick(data) {
         document.getElementById("transactionCard").innerHTML = data;
     })
     .catch(err => {
-        alert(err);
+        genModal("Error", err, "danger");
     });
 
 }
@@ -62,7 +60,7 @@ searchButton.addEventListener('click', () => { //UPDATE PROFILE FIRST AND LAST N
     const id = getCookie('id');
 
     if (isEmpty(dateFrom) || isEmpty(dateTo)) {
-        alert("First and Last name must not be empty!");
+        genModal("Message", "First and Last name must not be empty!", "info");
         return;
     }
 
@@ -74,9 +72,7 @@ const transactions = {
 
 fetch("/transactions", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(transactions)
     })
     .then(res => res.text())
@@ -85,7 +81,7 @@ fetch("/transactions", {
         document.getElementById("transactionCard").innerHTML = data;
     })
     .catch(err => {
-        alert(err);
+        genModal("Error", err, "danger");
     });
 
 });

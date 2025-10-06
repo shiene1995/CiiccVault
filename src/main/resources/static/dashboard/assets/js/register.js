@@ -16,12 +16,12 @@ function Register() {
     const Password2 = document.getElementById("Password2");
 
     if (isEmpty(FirstName) || isEmpty(LastName) || isEmpty(Username) || isEmpty(Password1) || isEmpty(Password2)) {
-        alert("All fields must be filled!");
+        genModal("Message", "All fields must be filled!", "info");
         return;
     }
 
     if (Password1.value !== Password2.value) {
-        alert("Password mismatch!");
+        genModal("Message", "Password mismatch!", "info");
         return;
     }
 
@@ -35,21 +35,17 @@ function Register() {
 
     fetch("/register", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(user)
     })
     .then(res => res.text())
     .then(data => {
         if (data == "TRUE") {
-            alert("ACCOUNT HAS BEEN CREATED!");
+            genModal("Message", "Account has been created!", "success");
             window.location.assign("login.html");}
-        else{alert(data);Password1.value = Password2.value = "";}
+        else{genModal("Message", data, "info");Password1.value = Password2.value = "";}
     })
-    .catch(err => {
-        alert(err);
-    });
+    .catch(err => {genModal("Error", err, "danger");});
 }
 
 function keyEnter(ID) {

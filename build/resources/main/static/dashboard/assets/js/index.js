@@ -29,7 +29,7 @@ sendMoney.addEventListener('click', () => { //UPDATE PROFILE FIRST AND LAST NAME
     const id = getCookie('id');
 
     if (isEmpty(accNum) || isEmpty(amountSent)) {
-        alert("All input must not be empty!");
+        genModal("Message", "All input must not be empty!", "info");
         return;
     }
 
@@ -41,9 +41,7 @@ const sendMoney = {
 
 fetch("/sendMoney", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"  
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(sendMoney)
     })
     .then(res => res.text())
@@ -51,15 +49,16 @@ fetch("/sendMoney", {
 
       if (data == "TRUE") {
         const newBalance = getCookie("balance") - amountSent.value;
-        setCookie("balance", newBalance, 20);
-        alert("Send Money successful!");
-        window.location.assign("index.html");
-      } else {alert(data);}
+        setCookie("balance", newBalance.toFixed(2), 20);
+        genModal("Success", "Send Money successful!", "success");
+
+        //reload the page after close the modal of generalModal
+        document.getElementById('generalModal').addEventListener('hidden.bs.modal', function () {location.reload();}); 
+        
+      } else {genModal("Message", data, "info");}
 
     })
-    .catch(err => {
-        alert(err);
-    });
+    .catch(err => {genModal("Error", err, "danger");});
 
 });
 
@@ -87,7 +86,7 @@ function refresh() {
 
     })
     .catch(err => {
-        alert(err);
+        genModal("Error", err, "danger");
     });
 }
 
